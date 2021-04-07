@@ -6,7 +6,7 @@
 // Feel free to declare any helper functions
 void printPuzzle(char** arr, int n);
 void searchPuzzle(char** arr, int n, char** list, int listSize);
-char lowerCase(char letter); //Uppercase to lowercase
+char lowerCase(char letter); 
 char upperCase(char letter);
 void horizontal(char** copy, int n, char* word);
 void verticalTopToBottom(char** copy, int n, char* word);
@@ -102,11 +102,11 @@ void searchPuzzle(char** arr, int n, char** list, int listSize) {
 	// Your implementation here
 	
 	for(int i=0;i<listSize;i++){
-		//horizontal(arr, n, *(list+i));
-		//verticalTopToBottom(arr, n, *(list+i));
-		//verticalBottomToTop(arr, n, *(list+i));
+		horizontal(arr, n, *(list+i));
+		verticalTopToBottom(arr, n, *(list+i));
+		verticalBottomToTop(arr, n, *(list+i));
 		diagonalTopLeftBottomRight(arr, n, *(list+i));
-		//diagonalBottomLeftTopRight(arr, n, *(list+i));
+		diagonalBottomLeftTopRight(arr, n, *(list+i));
 
 	}
 
@@ -202,29 +202,39 @@ for(int j=0;j<n;j++){
 }
 
 void diagonalTopLeftBottomRight(char** arr, int n, char* word){ 
-// Overall idea here is to start from the bottom left corner and search downward
-// Search -> start on current row ( the starting row = 14) -> (row - 1)(column + 1)
-// When diagonal search is done, return to corrent row in column 0 and go up 1 in the row
-int length=0;
-int begin=0;
-for(int i=14; i>n;i--){ //row
-	for(int j=0;j<n;j++){ //column
-		if(upperCase(*(word + length)) != upperCase(*(*(arr + i) + j))){ //Uppercase all words since only first letter is uppercase
+	// Overall idea here is to start from the bottom left corner and search downward
+	// Search -> start on current row ( the starting row = 14) -> (row - 1)(column + 1)
+	// When diagonal search is done, return to corrent row in column 0 and go up 1 in the row
+	int length=0;
+	int beginR=0;
+	int beginC=0;
+	for(int i=0; i<n;i++){ //row
+		for(int j=0;j<n;j++){ //column
+			if(upperCase(*(word + length)) != upperCase(*(*(arr + i) + j))){ //Uppercase all words since only first letter is uppercase
 				length=0; //If the char does not match, then the built up length will reset till a match is found
 			}else{
 				if(length==0){//Resetting the length lets you know the previous char's were not a match in the row
-					begin=i; // Updates current index
+					beginR=i; // Updates current index
+					beginC=j;
 				}
-				length+=1; //length of word will increase till a match is found or if there is a char that does not match
-				if(length==strlen(word)){ //if match is found
-					for(int q=begin;q<(begin + strlen(word));q++){ 
-						*(*(arr + q) + j)  = lowerCase(*(*(arr + q) + j)); //sets letters in arr to lowercase in proper index
+				length = 1;
+				for(int k=1;k<strlen(word);k++){
+					if(!((i+k)<n && (j + k)<n)){
+						break;
 					}
-					printf("Word found: %s\n", word); //prints matched words
-					printf("Begin: %d \n", begin);
+					if(upperCase(*(word + length)) != upperCase(*(*(arr + (i+k)) + (j + k)))){
+						length = 0;
+						break;
+					}
+					length++;
 				}
-			}
-			printf("%c ", *(*(arr + i) + j));			
+				if(length==strlen(word)){ //if match is found
+					for(int q=0;q<(strlen(word));q++){ 
+						*(*(arr + (beginR+q)) + (beginC+q))  = lowerCase(*(*(arr + (beginR+q)) + (beginC+q))); //sets letters in arr to lowercase in proper index
+					}
+					printf("Word found: %s\n", word);
+				}
+			}		
 		}
 	}
 }
@@ -234,9 +244,36 @@ void diagonalBottomLeftTopRight(char** arr, int n, char* word){
 // Instead of starting from the bottom left corner, I would start at the bottom right corner
 // When starting at the bottom right corner I will search diagonally upward (essentially the opposite way and direction of the other search)
 // Search -> (column + 1)(row - 1)
-for(int i=14; i>=0;i--){
+	int length=0;
+	int beginR=0;
+	int beginC=0;
+	for(int i=0; i<n;i++){
 		for(int j=0;j<n;j++){
-				
+			if(upperCase(*(word + length)) != upperCase(*(*(arr + i) + j))){ //Uppercase all words since only first letter is uppercase
+				length=0; //If the char does not match, then the built up length will reset till a match is found
+			}else{
+				if(length==0){//Resetting the length lets you know the previous char's were not a match in the row
+					beginR=i; // Updates current index
+					beginC=j;
+				}
+				length = 1;
+				for(int k=1;k<strlen(word);k++){
+					if(!((i-k)>=0 && (j+k)<n)){ //Out of bounds
+						break;
+					}
+					if(upperCase(*(word + length)) != upperCase(*(*(arr + (i-k)) + (j + k)))){
+						length = 0;
+						break;
+					}
+					length++;
+				}
+				if(length==strlen(word)){ //if match is found
+					for(int q=0;q<(strlen(word));q++){ 
+						*(*(arr + (beginR-q)) + (beginC+q))  = lowerCase(*(*(arr + (beginR-q)) + (beginC+q))); //sets letters in arr to lowercase in proper index
+					}
+					printf("Word found: %s\n", word);
+				}
+			}
 		}
 	}
 }
