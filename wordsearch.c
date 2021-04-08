@@ -202,9 +202,6 @@ for(int j=0;j<n;j++){
 }
 
 void diagonalTopLeftBottomRight(char** arr, int n, char* word){ 
-	// Overall idea here is to start from the bottom left corner and search downward
-	// Search -> start on current row ( the starting row = 14) -> (row - 1)(column + 1)
-	// When diagonal search is done, return to corrent row in column 0 and go up 1 in the row
 	int length=0;
 	int beginR=0;
 	int beginC=0;
@@ -240,10 +237,6 @@ void diagonalTopLeftBottomRight(char** arr, int n, char* word){
 }
 
 void diagonalBottomLeftTopRight(char** arr, int n, char* word){
-// Similar to the diagonal search above this one
-// Instead of starting from the bottom left corner, I would start at the bottom right corner
-// When starting at the bottom right corner I will search diagonally upward (essentially the opposite way and direction of the other search)
-// Search -> (column + 1)(row - 1)
 	int length=0;
 	int beginR=0;
 	int beginC=0;
